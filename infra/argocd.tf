@@ -22,7 +22,7 @@ resource "helm_release" "argocd" {
 }
 
 resource "kubectl_manifest" "root_app" {
-  yaml_body = file("${path.module}/../gitops/bootstrap/root.yml")
+  yaml_body = file("${path.module}/../gitops/platform/applicationset.yml")
 
   depends_on = [ helm_release.argocd ]
 }
