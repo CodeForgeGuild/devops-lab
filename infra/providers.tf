@@ -1,34 +1,18 @@
-terraform {
-  required_version = ">= 1.6.0"
-
-  required_providers {
-    kubernetes = {
-      source = "hashicorp/kubernetes"
-    }
-
-    helm = {
-      source = "hashicorp/helm"
-    }
-
-    kubectl = {
-      source  = "gavinbunney/kubectl"
-      version = "~> 1.14"
-    }
-  }
-}
-
+# Las credenciales vienen de data.external.k3d_kubeconfig, cuyo valor es
+# desconocido en plan time (el cluster aún no existe). Terraform difiere la
+# configuración del provider al apply, igual que hacía con kind_cluster.lab.
 provider "kubernetes" {
-  config_path = "../.kube/config"
-  config_context = "kind-gitops-lab"
+  host                   = data.external.k3d_kubeconfig.result["host"]
+  cluster_ca_certificate = base64decode(data.external.k3d_kubeconfig.result["ca"])
+  client_certificate     = base64decode(data.external.k3d_kubeconfig.result["cert"])
+  client_key             = base64decode(data.external.k3d_kubeconfig.result["key"])
 }
 
 provider "helm" {
-  kubernetes = {
-    config_path = "../.kube/config"
+  kubernetes {
+    host                   = data.external.k3d_kubeconfig.result["host"]
+    cluster_ca_certificate = base64decode(data.external.k3d_kubeconfig.result["ca"])
+    client_certificate     = base64decode(data.external.k3d_kubeconfig.result["cert"])
+    client_key             = base64decode(data.external.k3d_kubeconfig.result["key"])
   }
-}
-
-provider "kubectl" {
-  config_path = "../.kube/config"
-  config_context = "kind-gitops-lab"
 }

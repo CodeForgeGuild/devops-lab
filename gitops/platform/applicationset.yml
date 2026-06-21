@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: platform-apps
+  name: apps
   namespace: argocd
 
 spec:
@@ -9,24 +9,24 @@ spec:
     - git:
         repoURL: https://github.com/CodeForgeGuild/devops-lab.git
         revision: main
-        directories:
-          - path: gitops/apps/*
+        files:
+          - path: "gitops/apps/**/config.yaml"
 
   template:
     metadata:
-      name: "{{path.basename}}"
+      name: "{{appName}}"
 
     spec:
       project: default
 
       source:
-        repoURL: https://github.com/CodeForgeGuild/devops-lab.git
-        targetRevision: main
-        path: "{{path}}"
+        repoURL: "{{source.repoURL}}"
+        targetRevision: "{{source.targetRevision}}"
+        path: "{{source.path}}"
 
       destination:
         server: https://kubernetes.default.svc
-        namespace: "{{path.basename}}"
+        namespace: "{{destination.namespace}}"
 
       syncPolicy:
         automated:

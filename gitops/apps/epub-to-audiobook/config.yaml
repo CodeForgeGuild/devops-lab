@@ -1,0 +1,9 @@
+appName: epub-to-audiobook
+
+source:
+  repoURL: https://github.com/andresmarinabad/text-to-mp3.git
+  targetRevision: main
+  path: k8s
+
+destination:
+  namespace: epub-to-audiobook

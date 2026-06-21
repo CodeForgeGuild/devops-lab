@@ -14,7 +14,7 @@
     {
       devShells.${system}.default = pkgs.mkShell {
         packages = with pkgs; [
-          kind
+          k3d
           kubectl
           kubernetes-helm
           k9s
